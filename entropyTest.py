@@ -2,11 +2,15 @@ from scapy.all import *
 from math import log, sqrt
 import matplotlib.pyplot as plt
 
-#Test
+#Test Files
 PCAPFILE = "./Datasets/Normal-h3_2.pcap"
-PCAPFILEDDOS = "./Datasets/syn.pcap"
-PLOT_ENTROPY = []
-PLOT_WINDOW = []
+PCAPFILE2 = "./Datasets/Normal-h3_1.pcap"
+PCAPFILEDDOS = "./Datasets/SYN.pcap"
+PCAPFILEDOS = "./Datasets/syn.pcap"
+
+#Test Plot
+PLOT_ENTROPY = True
+PLOT_WM = True
 
 #Window
 WINDOW = 50
@@ -20,7 +24,7 @@ WM_THRESHOLD = 0.001
 EDDOS_INDICATOR = 0.5
 DDOS_THRESHOLD = 6
 DDOS_RESET = 10
-BLOCK = True
+BLOCK = False
 
 class entropyCalc:
     def __init__(self):
@@ -32,6 +36,10 @@ class entropyCalc:
         self.destData = {}
         self.blockData = {}
         self.blockList = {}
+        self.plotEntropy = []
+        self.plotWM = []
+        self.plotWindow = []
+
 
     def parseFlowTest(self, file, type):
         scapy_cap = rdpcap(file)
@@ -95,18 +103,20 @@ class entropyCalc:
         totalEntropy = -(totalEntropy)
 
 
-        #Normalized entropy for comparations
+        #Normalized entropy
         if len(self.hashFlows) == 1:
             totalEntropy = 0
         else:
             totalEntropy = totalEntropy / log(len(self.hashFlows), 2)
 
         #PLOT
-        PLOT_ENTROPY.append(totalEntropy)
-        if PLOT_WINDOW == []:
-            PLOT_WINDOW.append(totalPkts)
+        if PLOT_ENTROPY:
+            self.plotEntropy.append(totalEntropy)
+
+        if self.plotWindow == []:
+            self.plotWindow.append(totalPkts)
         else:
-            PLOT_WINDOW.append(PLOT_WINDOW[-1]+totalPkts)
+            self.plotWindow.append(self.plotWindow[-1]+totalPkts)
 
 
         self.hEntropy.append(totalEntropy)
@@ -118,6 +128,9 @@ class entropyCalc:
     def DosReset(self):
         self.ddosReset = 0
         self.ddosCount = 0
+
+    def getPlots(self):
+        return (self.plotEntropy, self.plotWM, self.plotWindow)
 
 
     def DDosDetection(self):
@@ -162,6 +175,9 @@ class entropyCalc:
 
         std_dev = sqrt(sum / len(self.hEntropy))
 
+        #Plot
+        if PLOT_WM:
+            self.plotWM.append(std_dev)
 
         if std_dev <= WM_THRESHOLD:
             self.ddosCount += 1
@@ -170,24 +186,23 @@ class entropyCalc:
 
 def main():
     e = entropyCalc()
-    e.parseFlowTest(PCAPFILE, TCP)
 
-    print("\n################")
-    print("\n################")
-    print("\n################")
+    #e.parseFlowTest(PCAPFILE, TCP)
+    #e.parseFlowTest(PCAPFILEDDOS, TCP)
+    #e.parseFlowTest(PCAPFILE2, TCP)
+    e.parseFlowTest(PCAPFILEDOS, TCP)
 
-    e.parseFlowTest(PCAPFILEDDOS, TCP)
+    plots = e.getPlots()
 
+    if PLOT_ENTROPY:
+        plt.scatter(plots[2], plots[0], label= "stars", color= "green",
+                marker= "*")
+        plt.show()
 
-    plt.scatter(PLOT_WINDOW, PLOT_ENTROPY, label= "stars", color= "green",
-            marker= "*")
-
-
-    #plt.scatter(PLOT_WINDOW, PLOT_ENTROPY, label= "stars", color= "green",
-    #        marker= "*")
-
-
-    plt.show()
+    if PLOT_WM:
+        plt.scatter(plots[2], plots[1], label= "stars", color= "blue",
+                marker= "*")
+        plt.show()
 
 
 
