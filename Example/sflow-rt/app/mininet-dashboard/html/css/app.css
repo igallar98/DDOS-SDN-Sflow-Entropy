@@ -1,0 +1,6 @@
+main { min-height: 300px; }
+.trend { width:100%; height:150px; }
+#vis-network { height:550px; }
+#vis-network .vis-network:focus{
+  outline: none;
+}

@@ -1,0 +1,2006 @@
+openapi: 3.0.1
+info:
+  title: RESTflow
+  description: Real-time sFlow analytics [REST API](https://sflow-rt.com/reference.php#rest)
+    for sFlow-RT. See [Writing Applications](https://sflow-rt.com/writing_applications.php).
+  contact:
+    name: sFlow-RT.com
+    url: https://sflow-rt.com/
+  license:
+    name: InMon sFlow-RT License Agreement
+    url: https://inmon.com/products/sFlow-RT/license.php
+  version: 1.0.0
+paths:
+  /version:
+    get:
+      tags:
+      - server
+      summary: Software version
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 2.3-1360
+  /license/json:
+    get:
+      tags:
+      - server
+      summary: License type and status
+      responses:
+        200:
+          description: OK
+          content: {}
+  /analyzer/json:
+    get:
+      tags:
+      - server
+      summary: sFlow analyzer performance information
+      responses:
+        200:
+          description: OK
+          content: {}
+  /agents/json:
+    get:
+      tags:
+      - server
+      summary: List sFlow agents with session information
+      parameters:
+      - name: agent
+        in: query
+        description: Agent IP address
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content: {}
+  /metrics/json:
+    get:
+      tags:
+      - metrics
+      summary: List names of available metrics
+      description: List currently active metrics and elapsed time (in mS) since last
+        seen.
+      responses:
+        200:
+          description: OK
+          content: {}
+  /metric/{agent}/json:
+    get:
+      tags:
+      - metrics
+      summary: List names of available metrics and latest values received from agent
+      parameters:
+      - name: agent
+        in: path
+        description: IP address
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content: {}
+        404:
+          description: Not found
+          content: {}
+  /metric/{agent}/{metric}/json:
+    get:
+      tags:
+      - metrics
+      summary: Get summary statistics for metrics
+      parameters:
+      - name: agent
+        in: path
+        description: IP address(es) or ALL or TOPOLOGY
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+        example:
+        - ALL
+      - name: metric
+        in: path
+        description: Metric name(s)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+        example:
+        - ifinoctets
+      - name: filter
+        in: query
+        description: Filter data sources
+        required: false
+        style: form
+        schema:
+          type: object
+          items:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Statistic'
+  /table/{agent}/{metric}/json:
+    get:
+      tags:
+      - metrics
+      summary: Get table of metric values
+      parameters:
+      - name: agent
+        in: path
+        description: IP address(es) or ALL or TOPOLOGY
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+        example:
+        - ALL
+      - name: metric
+        in: path
+        description: Metric name(s)
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+        example:
+        - ifinoctets
+        - ifoutoctets
+      - name: filter
+        in: query
+        description: Filter data sources
+        required: false
+        style: form
+        schema:
+          type: object
+          items:
+            type: array
+            items: 
+              type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Metric'
+  /dump/{agent}/{metric}/json:
+    get:
+      tags:
+      - metrics
+      summary: Get metric values
+      parameters:
+      - name: agent
+        in: path
+        description: IP address(es) or ALL or TOPOLOGY
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+        example:
+        - ALL
+      - name: metric
+        in: path
+        description: Metric name(s) or ALL
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+        example:
+        - ALL
+      - name: filter
+        in: query
+        description: Filter data sources
+        required: false
+        style: form
+        schema:
+          type: object
+          items:
+            type: array
+            items: 
+              type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Metric'
+  /flowkeys/json:
+    get:
+      tags:
+      - flows
+      summary: List available flow keys
+      description: List currently active flow keys and elapsed time (in mS) since
+        last seen.
+      responses:
+        200:
+          description: OK
+          content: {}
+  /flow/json:
+    get:
+      tags:
+      - flows
+      summary: Get flow definitions
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/Flow'
+  /flow/{name}/json:
+    get:
+      tags:
+      - flows
+      summary: Get flow definition
+      parameters:
+      - name: name
+        in: path
+        description: Flow definition name
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Flow'
+        400:
+          description: Bad request
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+    put:
+      tags:
+      - flows
+      summary: Create or update flow definition
+      description: Build flow records using packet samples. See [Define Flows](https://sflow-rt.com/define_flow.php)
+        for more information.
+      parameters:
+      - name: name
+        in: path
+        description: Flow definition name
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Flow'
+        required: true
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+    delete:
+      tags:
+      - flows
+      summary: Remove flow definition
+      parameters:
+      - name: name
+        in: path
+        description: Flow definition name
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+  /activeflows/{agent}/{name}/json:
+    get:
+      tags:
+      - flows
+      summary: List top active flows
+      description: List top active flows, removing duplicates for flows reported by
+        multiple data sources.
+      parameters:
+      - name: agent
+        in: path
+        description: IP address(es) or ALL or TOPOLOGY
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+        example:
+        - ALL
+      - name: name
+        in: path
+        description: Flow definition name
+        required: true
+        schema:
+          type: string
+      - name: maxFlows
+        in: query
+        description: Maximum number of flows
+        schema:
+          type: integer
+      - name: minValue
+        in: query
+        description: Minimum flow value
+        schema:
+          type: number
+      - name: aggMode
+        in: query
+        description: Method for combining flows across data sources; sum, max, edge, or core
+        schema:
+          type: string
+          enum: [sum,max,edge,core]
+      - name: filter
+        in: query
+        description: Select flow keys matching pattern
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+  /flowvalue/{agent}/{name}/json:
+    get:
+      tags:
+      - flows
+      summary: Get value for specific flow
+      description: Select a specific data source and flow and get its value.
+      parameters:
+      - name: agent
+        in: path
+        description: IP address of agent
+        required: true
+        schema:
+          type: string
+      - name: name
+        in: path
+        description: Location and flow metric name, e.g. 22.tcp for tcp flows on port
+          22
+        required: true
+        schema:
+          type: string
+      - name: key
+        in: query
+        description: Flow key, e.g. 10.0.0.1,10.0.0.2,22,45333
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content: {}
+        404:
+          description: Not found
+          content: {}
+  /flowlocations/{agent}/{name}/json:
+    get:
+      tags:
+      - flows
+      summary: Get locations that observed a specific flow
+      parameters:
+      - name: agent
+        in: path
+        description: IP address(es) or ALL or TOPOLOGY
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+        example:
+        - ALL
+      - name: name
+        in: path
+        description: Flow metric name, e.g. tcp
+        required: true
+        schema:
+          type: string
+      - name: key
+        in: query
+        description: Flow key, e.g. 10.0.0.1,10.0.0.2,22,45333
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+        404:
+          description: Not found
+          content: {}
+  /flows/json:
+    get:
+      tags:
+      - flows
+      summary: Get most recently logged flows
+      description: List completed flows. Flows will only be logged if log:true is
+        specified in the flow definition.
+      parameters:
+      - name: name
+        in: query
+        description: Select flows matching definition name
+        schema:
+          type: string
+      - name: flowID
+        in: query
+        description: Wait for flows after flowID
+        schema:
+          type: integer
+      - name: maxFlows
+        in: query
+        description: Maximum number of flows to return
+        schema:
+          type: integer
+      - name: timeout
+        in: query
+        description: Maximum number of seconds to wait for new flows
+        schema:
+          type: integer
+      responses:
+        200:
+          description: OK
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+  /group/json:
+    get:
+      tags:
+      - group
+      summary: List address groups
+      responses:
+        200:
+          description: OK
+          content: {}
+  /group/{name}/json:
+    get:
+      tags:
+      - group
+      summary: Get group definition
+      parameters:
+      - name: name
+        in: path
+        description: Group definition name
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        400:
+          description: Bad request
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+    put:
+      tags:
+      - group
+      summary: Create or update group
+      description: Define IP address group, mapping CIDRs to names. Used in flow definitions
+        to group addresses.
+      parameters:
+      - name: name
+        in: path
+        description: Group definition name
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Group'
+        required: true
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+    delete:
+      tags:
+      - group
+      summary: Delete group
+      parameters:
+      - name: name
+        in: path
+        description: Group definition name
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+  /map/json:
+    get:
+      tags:
+      - map
+      summary: List maps
+      responses:
+        200:
+          description: OK
+          content: {}
+  /map/{name}/json:
+    get:
+      tags:
+      - map
+      summary: Get map definition
+      parameters:
+      - name: name
+        in: path
+        description: Map definition name
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Map'
+        400:
+          description: Bad request
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+    put:
+      tags:
+      - map
+      summary: Create or update map
+      description: Map values to names. Used in flow definitions.
+      parameters:
+      - name: name
+        in: path
+        description: Map definition name
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Map'
+        required: true
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+    delete:
+      tags:
+      - map
+      summary: Delete map
+      parameters:
+      - name: name
+        in: path
+        description: Map definition name
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+  /threshold/json:
+    get:
+      tags:
+      - threshold
+      summary: List threshold definitions
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/Threshold'
+  /threshold/{name}/json:
+    get:
+      tags:
+      - threshold
+      summary: Get threshold definition
+      parameters:
+      - name: name
+        in: path
+        description: Threshold definition name
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Threshold'
+        400:
+          description: Bad request
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+    put:
+      tags:
+      - threshold
+      summary: Create or update threshold definition
+      description: Apply threshold to metric value and generate events when threshold
+        is exceeded.
+      parameters:
+      - name: name
+        in: path
+        description: Threshold definition name
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Threshold'
+        required: true
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+    delete:
+      tags:
+      - threshold
+      summary: Delete threshold
+      parameters:
+      - name: name
+        in: path
+        description: Threshold definition name
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+  /events/json:
+    get:
+      tags:
+      - threshold
+      summary: Get most recently logged events
+      description: List events. Events will only be generated if thresholds are defined.
+      parameters:
+      - name: thresholdID
+        in: query
+        description: Select events matching threshold definition name
+        schema:
+          type: string
+      - name: eventID
+        in: query
+        description: Wait for flows after eventID
+        schema:
+          type: integer
+      - name: maxEvents
+        in: query
+        description: Maximum number of events to return
+        schema:
+          type: integer
+      - name: timeout
+        in: query
+        description: Maximum number of seconds to wait for new events
+        schema:
+          type: integer
+      responses:
+        200:
+          description: OK
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+  /forwarding/json:
+    get:
+      tags:
+      - forwarding
+      summary: List sFlow forwarding entries
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/Forwarding'
+  /forwarding/{name}/json:
+    get:
+      tags:
+      - forwarding
+      summary: Get forwarding entry
+      parameters:
+      - name: name
+        in: path
+        description: Forwarding entry name
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forwarding'
+        400:
+          description: Bad request
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+    put:
+      tags:
+      - forwarding
+      summary: Create or update forwarding entry
+      description: Forward sFlow datagrams to additional collector
+      parameters:
+      - name: name
+        in: path
+        description: Forwarding entry name
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Forwarding'
+        required: true
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+    delete:
+      tags:
+      - forwarding
+      summary: Delete forwarding entry
+      parameters:
+      - name: name
+        in: path
+        description: Forwarding entry name
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+  /topology/json:
+    get:
+      tags:
+      - topology
+      summary: Get network topology
+      responses:
+        200:
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Topology'
+    put:
+      tags:
+      - topology
+      summary: Set network topology
+      description: Topology describes physical connections between switches and associates
+        sFlow data sources with switch ports.
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Topology'
+        required: true
+      responses:
+        204:
+          description: No content
+          content: {}
+  /tenant/json:
+    get:
+      tags:
+      - forwarding
+      summary: List tenant sFlow forwarding entries
+      description: List tenant names and the number of samples forwarded
+      responses:
+        200:
+          description: OK
+          content: {}
+  /tenant/{name}/json:
+    get:
+      tags:
+      - forwarding
+      summary: Get tenant sFlow forwarding entry
+      parameters:
+      - name: name
+        in: path
+        description: Tenant name
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tenant'
+        400:
+          description: Bad request
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+    put:
+      tags:
+      - forwarding
+      summary: Create or update tenant sFlow forwarding entry
+      description: Forward selected sFlow datagrams to additional collector
+      parameters:
+      - name: name
+        in: path
+        description: Tenant name
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Tenant'
+        required: true
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+    delete:
+      tags:
+      - forwarding
+      summary: Delete tenant forwarding entry
+      parameters:
+      - name: name
+        in: path
+        description: Tenant name
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+  /bgp/topprefixes/{router}/json:
+    get:
+      tags:
+      - bgp
+      summary: Query for most active IPv4 prefixes
+      parameters:
+      - name: router
+        in: path
+        description: Router IP address
+        required: true
+        schema:
+          type: string
+      - name: maxPrefixes
+        in: query
+        description: Maximum number of prefixes to return
+        schema:
+          type: integer
+      - name: minValue
+        in: query
+        description: Minimum value to include in result
+        schema:
+          type: number
+      - name: direction
+        in: query
+        description: Direction of traffic, source or destination
+        schema:
+          type: string
+      - name: includeCovered
+        in: query
+        description: Include prefixes that are covered by top prefix but wouldn't
+          otherwise make list
+        schema:
+          type: boolean
+      - name: pruneCovered
+        in: query
+        description: Eliminate covered prefixes that share same next-hop
+        schema:
+          type: boolean
+      - name: minPrefix
+        in: query
+        description: Exlude short prefixes, e.g. set to 1 to exclude 0.0.0.0/0
+        schema:
+          type: integer
+      responses:
+        200:
+          description: OK
+          content: {}
+  /bgp/topprefixes6/{router}/json:
+    get:
+      tags:
+      - bgp
+      summary: Query for most active IPv6 prefixes
+      parameters:
+      - name: router
+        in: path
+        description: Router IP address
+        required: true
+        schema:
+          type: string
+      - name: maxPrefixes
+        in: query
+        description: Maximum number of prefixes to return
+        schema:
+          type: integer
+      - name: minValue
+        in: query
+        description: Minimum value to include in result
+        schema:
+          type: number
+      - name: direction
+        in: query
+        description: Direction of traffic, source or destination
+        schema:
+          type: string
+      - name: includeCovered
+        in: query
+        description: Include prefixes that are covered by top prefix but wouldn't
+          otherwise make list
+        schema:
+          type: boolean
+      - name: pruneCovered
+        in: query
+        description: Eliminate covered prefixes that share same next-hop
+        schema:
+          type: boolean
+      - name: minPrefix
+        in: query
+        description: Exlude short prefixes, e.g. set to 1 to exclude 0.0.0.0/0
+        schema:
+          type: integer
+      responses:
+        200:
+          description: OK
+          content: {}
+  /bgp/prefix/{router}/json:
+    get:
+      tags:
+      - bgp
+      summary: Get information on BGP prefix associated with IP address
+      parameters:
+      - name: router
+        in: path
+        description: Router IP address
+        required: true
+        schema:
+          type: string
+      - name: address
+        in: query
+        description: IPv4 or IPv6 address to query
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+  /bgp/routepusher/{router}/json:
+    get:
+      tags:
+      - bgp
+      summary: Get list of prefixes
+      parameters:
+      - name: router
+        in: path
+        description: Router IP address
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                 type: string
+        400:
+          description: Bad request
+          content: {}
+        404:
+          description: Not found
+          content: {}
+  /bgp/routepusher/{router}/{address}/{bits}/json:
+    get:
+      tags:
+      - bgp
+      summary: Get route
+      parameters:
+      - name: router
+        in: path
+        description: Router IP address
+        required: true
+        schema:
+          type: string
+      - name: address
+        in: path
+        description: IP address part of CIDR
+        required: true
+        schema:
+          type: string
+      - name: bits
+        in: path
+        description: Bits part of CIDR
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        400:
+          description: Bad request
+          content: {} 
+        404:
+          description: Not found
+          content: {}
+    put:
+      tags:
+      - bgp
+      summary: Create or update route
+      parameters:
+      - name: router
+        in: path
+        description: Router IP address
+        required: true
+        schema:
+          type: string
+      - name: address
+        in: path
+        description: IP address part of CIDR
+        required: true
+        schema:
+          type: string
+      - name: bits
+        in: path
+        description: Bits part of CIDR
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Route'
+        required: true
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+    delete:
+      tags:
+      - bgp
+      summary: Delete route
+      parameters:
+      - name: router
+        in: path
+        description: Router IP address
+        required: true
+        schema:
+          type: string
+      - name: address
+        in: path
+        description: IP address part of CIDR
+        required: true
+        schema:
+          type: string
+      - name: bits
+        in: path
+        description: Bits part of CIDR
+        required: true
+        schema:
+          type: integer
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+  /bgp/flowspec/{router}/json:
+    get:
+      tags:
+      - bgp
+      summary: List installed FlowSpecs
+      parameters:
+      - name: router
+        in: path
+        description: Router IP address
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlowSpec'
+        400:
+          description: Bad request
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+    put:
+      tags:
+      - bgp
+      summary: Add Flowspec
+      parameters:
+      - name: router
+        in: path
+        description: Router IP address
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/FlowSpec'
+        required: true
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+    delete:
+      tags:
+      - bgp
+      summary: Delete Flowspec
+      parameters:
+      - name: router
+        in: path
+        description: Router IP address
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/FlowSpec'
+        required: true
+      responses:
+        204:
+          description: No content
+          content: {}
+        400:
+          description: Bad request
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+  /scripts/json:
+    get:
+      tags:
+      - application
+      summary: Status of scripts loaded at startup
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    flowsReceived:
+                      type: integer
+                      description: Number of flow records received by script
+                      example: 34566
+                    alive:
+                      type: boolean
+                      description: Script running
+                      example: false
+                    eventsReceived:
+                      type: integer
+                      description: Number of events received by script
+                      example: 12
+                    cpuMs:
+                      type: integer
+                      description: CPU time in milliseconds
+                      example: 2572
+                    flowsLost:
+                      type: integer
+                      description: Number of flow records discarded before reaching
+                        script
+                      example: 0
+                    gracefulExit:
+                      type: boolean
+                      description: Script completed without error
+                      example: false
+                    error:
+                      type: string
+                      description: Error information
+                      example: 'script.js script.js#3 ReferenceError: "a" is not defined.'
+                    eventsLost:
+                      type: integer
+                      description: Number of events discarded before reaching script
+                      example: 0
+                    requestsReceived:
+                      type: integer
+                      description: Number of HTTP requests handled by script
+                      example: 23
+                    requestsLost:
+                      type: integer
+                      description: Number of HTTP requests discarded before reaching
+                        script
+                      example: 0
+  /apps/json:
+    get:
+      tags:
+      - application
+      summary: Information about application scripts loaded at startup
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    entry:
+                      type: string
+                      description: HTML entry point
+                      example: /html/
+                    scripts:
+                      type: array
+                      items:
+                        type: string
+                        description: Script file name
+                        example: script.js
+        404:
+          description: Not found
+          content: {}
+  /app/{name}/status:
+    get:
+      tags:
+      - application
+      summary: OK if application scripts exited without error or are still running
+      parameters:
+      - name: name
+        in: path
+        description: Application name
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+        404:
+          description: Not found
+          content: {}
+        503:
+          description: Service Unavailable
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: UNAVAILABLE
+  /status:
+    get:
+      tags:
+      - application
+      summary: OK if all scripts for all applications exited without error or are still running
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+        503:
+          description: Service Unavailable
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: UNAVAILABLE
+  /prometheus/analyzer/txt:
+    get:
+      tags:
+      - prometheus
+      - server
+      summary: sFlow analyzer performance information as Prometheus metrics
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: sflow_analyzer_agents 7
+  /prometheus/metrics/{agent}/{metric}/txt:
+    get:
+      tags:
+      - prometheus
+      - metrics
+      summary: Get Prometheus metrics
+      parameters:
+      - name: agent
+        in: path
+        description: IP address(es) or ALL or TOPOLOGY
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+        example:
+        - ALL
+      - name: metric
+        in: path
+        description: Metric name(s) or ALL
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+        example:
+        - ALL
+      - name: filter
+        in: query
+        description: Filter data sources
+        required: false
+        style: form
+        schema:
+          type: object
+          items:
+            type: array
+            items: 
+              type: string
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: sflow_load_one{agent="10.0.0.200",datasource="2.1",host="cl-leaf1"} 0.1
+components:
+  schemas:
+    Group:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: string
+          description: IP address or CIDR
+      description: Assign IP address space to labels
+      example:
+        private:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+        other:
+        - 0.0.0.0/0
+    Tenant:
+      type: object
+      properties:
+        collectorAddress:
+          type: string
+          description: sFlow collector address
+          example: 10.0.0.1
+        collectorPort:
+          type: integer
+          description: sFlow collector UDP port
+          example: 6343
+        filters:
+          type: object
+          properties:
+            ifindex:
+              type: array
+              items:
+                type: string
+                description: Switch port SNMP ifIndex
+                example: 10.0.0.1_2
+            ifname:
+              type: array
+              items:
+                type: string
+                description: Switch port SNMP ifName
+                example: 10.0.0.1_eth3
+            cidr:
+              type: array
+              items:
+                type: string
+                description: IP address or CIDR
+                example: 10.0.0.0/24
+            mac:
+              type: array
+              items:
+                type: string
+                description: MAC address
+                example: D8D385B2DD2B
+          description: Select sFlow data sources
+      description: Forward selected sFlow records
+      example:
+        collectorAddress: 10.0.0.1
+        filters:
+          cidr:
+          - 10.0.0.0/24
+    Statistic:
+      type: object
+      properties:
+        agent:
+          type: string
+          description: IP address of sFlow agent
+          example: 10.0.0.1
+        dataSource:
+          type: string
+          description: Datasource reporting selected metric
+          example: "2.1"
+        metricName:
+          type: string
+          description: Name of metric summarized by statistic
+        metricValue:
+          type: number
+          description: Value of statistic
+          example: 0.4
+        metricN:
+          type: integer
+          description: Number of metrics summarized in statistic
+          example: 12
+        lastUpdate:
+          type: integer
+          description: Milliseconds since value of selected metric updated
+          example: 6074
+        lastUpdateMin:
+          type: integer
+          description: Milliseconds since value of most recent summarized metric updated
+          example: 6074
+        lastUpdateMax:
+          type: integer
+          description: Milliseconds since value of oldest summarized metric updated
+          example: 6074
+      description: Summary statistic for set of metrics
+      example:
+        metricName: med:ifinoctets
+        metricN: 59
+        lastUpdateMax: 57573
+        lastUpdateMin: 547
+        metricValue: 0
+    Forwarding:
+      type: object
+      required:
+        - address
+      properties:
+        address:
+          type: string
+          description: sFlow collector address
+          example: 10.0.0.1
+        port:
+          type: integer
+          description: sFlow collector port
+          default: 6343
+          example: 6343
+        agents:
+          type: array
+          description: sFlow agent address filter
+          items:
+            type: string
+            example: 10.0.0.254
+      description: Destination for forwarding sFlow
+      example:
+        address: 10.0.0.1
+    FlowSpec:
+      type: object
+      properties:
+        match:
+          type: object
+          properties:
+            source-port:
+              type: string
+              description: Source TCP/UDP port
+              example: "=53"
+            destination:
+              type: string
+              description: Destination prefix
+              example: 10.0.0.0/24
+            length:
+              type: string
+              description: Packet length - excluding L2 headers
+              example: "=0"
+            icmp-type:
+              type: string
+              description: ICMP type field
+              example: "=8"
+            icmp-code:
+              type: string
+              description: ICMP code field
+              example: "=0"
+            source:
+              type: string
+              description: Source prefix
+              example: 10.0.0.1/32
+            version:
+              type: string
+              description: IP version
+              example: "4"
+            tcp-flags:
+              type: string
+              description: FSRPAUECN
+              example: "=S"
+            protocol:
+              type: string
+              description: IP protocol
+              example: "=17"
+            fragment:
+              type: string
+              description: DIFL
+              example: "=I"
+            dscp:
+              type: string
+              description: IP ToS field
+              example: "=0"
+            port:
+              type: string
+              description: Source or destination TCP/UDP port
+              example: "=53"
+            destination-port:
+              type: string
+              description: Destination TCP/UDP port
+              example: "=53"
+          example:
+            protocol: "=17"
+            destination: 10.0.0.1
+            source-port: "=53"
+        then:
+          type: object
+          properties:
+            redirect-as:
+              type: string
+              description: Redirect VRF (AS-2byte)
+              example: "65001"
+            redirect-as4:
+              type: string
+              description: Redirect VRF (AS-4byte)
+              example: "4200000001"
+            redirect-ip:
+              type: string
+              description: Redirect VRF (IPv4)
+              example: "10.0.0.1"
+            redirect-nexthop:
+              type: string
+              description: Redirect to IP Next Hop
+              example: "10.0.0.1"
+            redirect-action-ip:
+              type: string
+              description: Redirect to IP Next Hop
+              example: "10.0.0.1"
+            traffic-rate:
+              type: string
+              description: Rate limit in bytes per second
+              example: "0"
+            traffic-marking:
+              type: string
+              description: Set IP DSCP bits
+              example: "le"
+            traffic-action:
+              type: string
+              description: none, continue, sample, or sampleandcontinue
+              example: "sample"
+            communities:
+              type: string
+              description: Set additional communities
+              example: 100:300-100:250
+          example:
+            traffic-rate: "0"
+      description: Apply actions to selected flows
+    Metric:
+      type: object
+      properties:
+        agent:
+          type: string
+          description: IP address of sFlow agent
+          example: 10.0.0.1
+        dataSource:
+          type: string
+          description: Datasource reporting metric
+          example: "2.1"
+        metricName:
+          type: string
+          description: Metric name
+        metricValue:
+          type: number
+          description: Metric value
+          example: 0.4
+        lastUpdate:
+          type: integer
+          description: Milliseconds since value updated
+          example: 6074
+      description: Single metric value
+    Topology:
+      type: object
+      properties:
+        nodes:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              agent:
+                type: string
+                description: sFlow agent address
+                example: 10.0.0.1
+              dpid:
+                type: string
+                description: OpenFlow DPID
+                example: "0000000000000003"
+              ports:
+                type: object
+                properties:
+                  ifindex:
+                    type: string
+                    description: SNMP ifIndex
+                    example: "1"
+                  ofport:
+                    type: string
+                    description: OpenFlow port number
+                    example: "1"
+                  dpid:
+                    type: string
+                    description: OpenFlow DPID
+                    example: "0000000000000003"
+                  tags:
+                    type: object
+                    additionalProperties:
+                      type: string
+                    description: Tags and values
+                description: Named ports
+              tags:
+                type: object
+                additionalProperties:
+                  type: string
+                description: Tags and values
+          description: Named nodes
+          example:
+            leaf1:
+              agent: 10.0.0.1
+              ports:
+                eth1:
+                  ifindex: "2"
+            spine1:
+              agent: 10.0.0.2
+              ports:
+                eth2:
+                  ifindex: "3"
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              node2:
+                type: string
+                description: Node name
+                example: spine1
+              node1:
+                type: string
+                description: Node name
+                example: leaf1
+              port1:
+                type: string
+                description: Port name
+                example: eth1
+              port2:
+                type: string
+                description: Port name
+                example: eth2
+              tags:
+                type: object
+                additionalProperties:
+                  type: string
+                description: Tags and values
+          description: Named links
+          example:
+            link1:
+              node1: leaf1
+              port1: eth1
+              node2: spine1
+              port2: eth2
+      description: Physical network topology
+    Map:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: string
+          description: Flow value
+      description: Map flow values to labels
+      example:
+        web:
+        - "80"
+        - "443"
+        - "8080"
+        mail:
+        - "25"
+        - "465"
+        - "587"
+    Route:
+      required:
+      - nexthop
+      type: object
+      properties:
+        nexthop:
+          type: string
+          description: IP address of next hop router
+          example: 10.0.0.1
+        nexthoplinklocal:
+          type: string
+          description: IP address of link
+          example: FE80:1::1
+        aspath:
+          type: string
+          description: AS path
+          example: 1-2-3
+        origin:
+          type: string
+          description: Route origin
+          example: IGP
+        localpref:
+          type: integer
+          description: Local preference
+          example: 100
+        med:
+          type: integer
+          description: Multi-exit descriminator
+          example: 0
+        communities:
+          type: string
+          description: Communities
+          example: 65000:666
+      description: BGP route entry
+      example:
+        nexthop: 10.0.0.1
+    Threshold:
+      required:
+      - metric
+      - value
+      type: object
+      properties:
+        metric:
+          type: string
+          description: Metric to apply threshold to
+          example: load_one
+        value:
+          type: number
+          description: Maximum value of metric
+          example: 10.0
+        filter:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          description: Filter on data source attributes
+          example:
+            os_name:
+            - linux
+        byFlow:
+          type: boolean
+          description: Set to true to generate a new event for each new flow exceeding
+            threshold
+          example: false
+        timeout:
+          type: integer
+          description: Seconds of hysteresis before re-arming threshold
+          example: 10
+      description: Threshold specification
+      example:
+        metric: load_one
+        value: 2
+    Flow:
+      required:
+      - value
+      type: object
+      properties:
+        keys:
+          type: string
+          description: List of flow keys
+          example: ipsource,ipdestination
+        value:
+          type: string
+          description: Numeric flow key
+          example: bytes
+        values:
+          type: string
+          description: List of additional numeric flow keys
+          example: frames 
+        filter:
+          type: string
+          description: Boolean expression filtering flow keys
+          example: ipsource=10.0.0.1
+        n:
+          type: integer
+          description: Number of largest flows to maintain
+          example: 5
+        t:
+          type: integer
+          description: Smoothing factor (in seconds)
+          example: 10
+        dropped:
+          type: boolean
+          description: Select packet discard events
+          example: false
+        fs:
+          type: string
+          description: Separates flow record fields
+          example: _SEP_
+        log:
+          type: boolean
+          description: Log flows
+          example: true
+        flowStart:
+          type: boolean
+          description: Log start of flow, otherwise record end of flow
+          example: true
+        activeTimeout:
+          type: integer
+          description: Number of seconds before flushing active flow
+          example: 60
+        ipfixCollectors:
+          type: array
+          description: Send IPFIX records to specified collectors
+          example:
+          - 10.0.0.2
+          items:
+            type: string
+      description: Flow metric specification
+      example:
+        keys: ipsource,ipdestination
+        value: bytes

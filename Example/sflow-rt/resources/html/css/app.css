@@ -1,0 +1,7 @@
+main { min-height: 300px; }
+#status .gauge { margin: 10px; }
+#acknowledgements { font-size: 80%; }
+#app-list a { width: 12em; }
+@media (max-width: 420px) {
+  #app-list a { width: 100%; }
+}

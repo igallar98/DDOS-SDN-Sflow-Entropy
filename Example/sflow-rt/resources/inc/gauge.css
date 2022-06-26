@@ -1,0 +1,29 @@
+gauge {
+  padding: 10%;
+}
+
+.gauge svg {
+  max-width: 100%;
+}
+
+.gauge path {
+  stroke-width: 75;
+  stroke: #ecf0f1;
+  fill: none;
+}
+
+.gauge path.data-arc {
+  stroke: #27ae60;
+}
+
+.gauge text {
+  fill: #27ae60;
+}
+
+.gauge.warn path.data-arc {
+  stroke: #e74c3c;
+}
+
+.gauge.warn text {
+  fill: #e74c3c;
+}

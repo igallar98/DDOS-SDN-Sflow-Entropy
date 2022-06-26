@@ -7,6 +7,7 @@ PCAPFILE = "./Datasets/Normal-h3_2.pcap"
 PCAPFILE2 = "./Datasets/Normal-h3_1.pcap"
 PCAPFILEDDOS = "./Datasets/SYN.pcap"
 PCAPFILEDOS = "./Datasets/syn.pcap"
+PCAPFILEUDPDDOS = "./Datasets/UDP.pcap"
 
 #Test Plot
 PLOT_ENTROPY = True
@@ -190,7 +191,7 @@ def main():
     #e.parseFlowTest(PCAPFILE, TCP)
     #e.parseFlowTest(PCAPFILEDDOS, TCP)
     #e.parseFlowTest(PCAPFILE2, TCP)
-    e.parseFlowTest(PCAPFILEDOS, TCP)
+    e.parseFlowTest(PCAPFILEDDOS, TCP)
 
     plots = e.getPlots()
 

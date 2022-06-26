@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="icon" type="image/png" href="../inc/img/favicon.png">
+        <link rel="stylesheet" href="../inc/bootstrap.min.css">
+        <link rel="stylesheet" href="../inc/gauge.css">
+        <link rel="stylesheet" href="css/app.css">
+        <script type="text/javascript" src="../inc/jquery.min.js"></script>
+        <script type="text/javascript" src="../inc/jquery.widget.js"></script>
+        <script type="text/javascript" src="../inc/jquery.gauge.js"></script>
+        <script type="text/javascript" src="../inc/popper.min.js"></script>
+        <script type="text/javascript" src="../inc/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/app.js"></script>
+        <title>sFlow-RT</title>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-md navbar-dark mb-3" style="background-color: #336;">
+            <a class="navbar-brand" href="https://sflow-rt.com/">
+                <img src="../inc/img/inmon.svg" height="30" class="d-inline-block align-top">
+                sFlow-RT
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                        <a class="nav-link" href="#status">Status</a>
+                    </li>
+                    <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                        <a class="nav-link" href="#apps">Apps</a>
+                    </li>
+                    <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                        <a class="nav-link" href="#api">API</a>
+                    </li>
+                    <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                        <a class="nav-link" href="#license">License</a>
+                    </li>
+                    <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="container" role="main">
+
+            <section id="status">
+                <div class="row align-items-center">
+                    <div class="col-md"><div id="metric-agents"></div></div>
+                    <div class="col-md"><div id="metric-sflow-bps"></div></div>
+                    <div class="col-md"><div id="metric-sflow-pps"></div></div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-md"><div id="metric-app-run"></div></div>
+                    <div class="col-md"><div id="metric-app-err"></div></div>
+                    <div class="col-md"><div id="metric-cpu-process"></div></div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-md"><div id="metric-script-run"></div></div>
+                    <div class="col-md"><div id="metric-script-err"></div></div>
+                    <div class="col-md"><div id="metric-cpu-system"></div></div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-md"><div id="metric-http-conn-cur"></div></div>
+                    <div class="col-md"><div id="metric-http-conn-tot"></div></div>
+                    <div class="col-md"><div id="metric-heap"></div></div>
+                </div>
+            </section>
+
+            <section id="apps">
+                <h3>Installed Applications</h3>
+                <p>Click on an application in the list to access the application's home page:</p>
+                <div id="app-list" class="mb-3"></div>
+                <p>Visit <a href="https://sflow-rt.com/download.php#applications">Applications</a> for information on downloading applications.</p>
+            </section>
+
+            <section id="api">
+                <p><a href="https://sflow-rt.com/writing_applications.php">Writing Applications</a> provides a general overview of the structure of a typical sFlow-RT application.
+                    Applications can either be external, using the REST API, or embedded using the internal JavaScript API.</p>
+                <a class="btn btn-outline-primary" href="../api/">Open REST API Explorer</a>
+            </section>
+            <section id="license">
+                <h3>InMon sFlow-RT <span id="license-type">Research and Evaluation</span> License Agreement</h3>
+                <p>Copyright &copy; 2012-<span class="year">2019</span>, InMon Corp. All rights reserved.</p>
+                <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
+                <ol>
+                    <li><span id="license-restriction">Only use for research purposes and evaluation purposes is permitted.</span></li>
+                    <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+                    <li>Redistributions in binary form must reproduce the above copyright  notice,
+                        this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+                    <li>All advertising materials mentioning features or use of this software must display the following acknowledgement:<br/>
+                        This product includes software developed by the InMon Corp.</li>
+                    <li>Neither the name of InMon Corp. nor the names of its contributors may be used to endorse or promote products derived from this
+                        software without specific prior written permission.</li>
+                    <li>This license does not convey any patent license nor any right to practice any patented technology.</li>
+                    <li>Any party that commences or facilitates any proceeding in any jurisdiction against InMon Corp.
+                        immediately loses all rights granted under this license.</li>
+                    <li>Reverse engineering of binary materials is prohibited, and all use and distribution of any results of de-compilation or reverse-engineering
+                        is prohibited.</li>
+                </ol>
+                <p>THIS SOFTWARE IS PROVIDED BY InMon Corp. &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL InMon Corp. BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+            </section>
+
+            <section id="about" class="container">
+                <div class="text-nowrap table-responsive">
+                    <table class="table table-striped table-bordered table-sm" id="about-info">
+                        <tbody>
+                            <tr><td class="text-right font-weight-bold">Software Version</td><td id="about-version"></td></tr>
+                            <tr><td class="text-right font-weight-bold">Host Name</td><td id="about-hostname"></td></tr>
+                            <tr><td class="text-right font-weight-bold">sFlow Rate</td><td id="about-sflowrate"></td></tr>
+                            <tr><td class="text-right font-weight-bold">License Type</td><td id="about-license"></td></tr>
+                            <tr><td class="text-right font-weight-bold">License Number</td><td id="license-number"></td></tr>
+                            <tr><td class="text-right font-weight-bold">License Account</td><td id="license-account"></td></tr>
+                            <tr><td class="text-right font-weight-bold">Licensed Product</td><td id="license-product"></td></tr>
+                            <tr><td class="text-right font-weight-bold">Licensed Host</td><td id="license-host"></td></tr>
+                            <tr><td class="text-right font-weight-bold">Licensed Max. Rate</td><td id="license-rate"></td></tr>
+                            <tr><td class="text-right font-weight-bold">License Expires</td><td id="license-expires"></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>sFlow-RT&trade; incorporates InMon's asynchronous analytics technology (U.S. Patents 8838774, 9509583, 9712443, 9722926), delivering real-time visibility to Software Defined Networking (SDN), DevOps and Orchestration stacks and enabling new classes of performance aware application such as load balancing, DDoS mitigation and workload placement.</p>
+                <p>The following third party packages are included:</p>
+                <div class="text-nowrap table-responsive">
+                    <table id="acknowledgements" class="table table-striped table-sm table-bordered">
+                        <thead class="thead-light"><th>Package</th><th>License</th></tr>
+                        <tbody>
+                            <tr><td><a href="https://getbootstrap.com/">Bootstrap</a></td><td><a href="https://getbootstrap.com/docs/4.0/about/license/">MIT License</a></td></tr>
+                            <tr><td><a href="https://www.datatables.net/">DataTables</a></td><td><a href="https://www.datatables.net/license/mit">MIT License</a></td></tr>
+                            <tr><td><a href="https://www.eclipse.org/jetty">Jetty</a></td><td><a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0 License</a></td></tr>
+                            <tr><td><a href="https://jgrapht.org/">JGraphT</a></td><td><a href="https://www.eclipse.org/legal/epl-v10.html">Eclipse Public License - v 1.0</a></td></tr>
+                            <tr><td><a href="https://jquery.com">jQuery</a></td><td><a href="https://jquery.org/license/">MIT License</a></td></tr>
+                            <tr><td><a href="https://jqueryui.com/">JQuery-UI</a></td><td><a href="https://jquery.org/license/">MIT License</a></td></tr>
+                            <tr><td><a href="https://json.org">JSON</a></td><td><a href="https://www.json.org/license.html">JSON License</a></td></tr>
+                            <tr><td><a href="https://github.com/maxmind/MaxMind-DB-Reader-java">MaxMind-DB-Reader</a></td><td><a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0 License</a></td></tr>
+                            <tr><td><a href="https://dev.maxmind.com/geoip/geoip2/geolite2/">MaxMind GeoLite2 Databases</a></td><td><a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 Unported License</a></td></tr>
+                            <tr><td><a href="https://netty.io/">Netty</a></td><td><a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0 License</a></td></tr>
+                            <tr><td><a href="https://popper.js.org/">Popper.js</a></td><td><a href="https://github.com/FezVrasta/popper.js/#user-content-copyright-and-license">MIT License</a></td></tr>
+                            <tr><td><a href="https://developer.mozilla.org/en-US/docs/Rhino">Rhino</a></td><td><a href="https://developer.mozilla.org/en-US/docs/Rhino/License">MPL 2.0 License</a></td></tr>
+                            <tr><td><a href="https://bitbucket.org/asomov/snakeyaml">SnakeYAML</a></td><td><a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0 License</a></td></tr>
+                            <tr><td><a href="https://www.snmp4j.org/">SNMP4J</td><td><a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0 License</a></td></tr>
+                            <tr><td><a href="https://github.com/swagger-api/swagger-ui">Swagger UI</a></td><td><a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0 License</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="footer page-footer border-top mt-3">
+            <div class="footer-copyright text-center py-2">
+                <small class="text-muted">Copyright &copy; 2015-<span class="year">2019</span> InMon Corp. ALL RIGHTS RESERVED</small>
+            </div>
+        </footer>
+    </body>
+</html>
+

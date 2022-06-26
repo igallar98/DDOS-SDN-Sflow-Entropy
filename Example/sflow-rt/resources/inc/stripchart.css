@@ -1,0 +1,20 @@
+.stripchart .clickable { cursor: crosshair }
+.stripchart { position:relative; margin:5px 0px 5px 0px; }
+.stripchart canvas { height:100%; width:100%; }
+.stripchart table {
+  font-family: sans-serif;
+  font-size: 11px;
+  line-height: 100%;
+  margin-left: 5px;
+  border-collapse: separate;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.6);
+}
+.stripchart table th,td { white-space: nowrap; }
+.stripchart .swatch {
+  box-sizing: content-box;
+  height: 8px;
+  width:8px;
+  border: 1px solid black;
+}
