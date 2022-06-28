@@ -3,11 +3,25 @@ import requests
 import json
 
 API = "http://localhost:8008/"
+
+
 class entropySflowAPI:
     def __init__(self):
         self.thresholds = {}
+        self.flows = {}
         self.threshold = "threshold/"
+        self.flow = "flow/"
         self.end = "/json"
+        self.eventr = API + "events/json?maxEvents=10&timeout=60"
+
+
+    def setFlow(self, name, keys, value = "bytes", log = True):
+        fwr = {'keys':keys,'value':value,'log':log}
+        requests.put(API + self.flow + name + self.end, data=json.dumps(fwr))
+        self.flows[keys] = fwr
+
+    def unsetFlow(self, key):
+        pass
 
     def setThreshold(self, name, metric, value, byflow = True):
         thr = {'metric':metric, 'value': value, 'byFlow':byflow}
@@ -17,7 +31,16 @@ class entropySflowAPI:
     def unsetThreshold(self, name):
         pass
 
-    def getEvent():
+    def getEvent(self):
+        eventID = -1
+        r = requests.get(self.eventr + "&eventID=" + str(eventID))
+        if r.status_code != 200: return -1
+        events = r.json()
+        if len(events) == 0: return 0
+        eventID = events[0]["eventID"]
+        events.reverse()
+        for e in events:
+          return json.dumps(e)
 
 def main():
     es = entropySflowAPI()
@@ -25,20 +48,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-threshold = {'metric':'ovs_dp_hitrate', 'value': 90, 'byFlow':True}
-requests.put('http://localhost:8008/threshold/large-tcp/json',data=json.dumps(threshold))
-
-
-eventurl = 'http://localhost:8008/events/json?maxEvents=10&timeout=60'
-eventID = -1
-while 1 == 1:
-  r = requests.get(eventurl + "&eventID=" + str(eventID))
-  if r.status_code != 200: break
-  events = r.json()
-  if len(events) == 0: continue
-
-  eventID = events[0]["eventID"]
-  events.reverse()
-  for e in events:
-    print(json.dumps(e))
