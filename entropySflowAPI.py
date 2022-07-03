@@ -12,7 +12,8 @@ class entropySflowAPI:
         self.threshold = "threshold/"
         self.flow = "flow/"
         self.end = "/json"
-        self.eventr = API + "events/json?maxEvents=10&timeout=60"
+        self.eventr = API + "events/json?maxEvents=1&timeout=1"
+        self.events = {}
 
 
     def setFlow(self, name, keys, value = "bytes", log = True):
@@ -23,24 +24,30 @@ class entropySflowAPI:
     def unsetFlow(self, key):
         pass
 
-    def setThreshold(self, name, metric, value, byflow = True):
-        thr = {'metric':metric, 'value': value, 'byFlow':byflow}
+    def setThreshold(self, name, metric, value, byflow = True, timeout = 2):
+        thr = {'metric':metric, 'value': value, 'byFlow':byflow, 'timeout':timeout}
         requests.put(API + self.threshold + name + self.end, data=json.dumps(thr))
         self.thresholds[metric] = thr
+        self.events[name] = -1
 
     def unsetThreshold(self, name):
         pass
 
-    def getEvent(self):
+    def getEvent(self, unique = True):
         eventID = -1
-        r = requests.get(self.eventr + "&eventID=" + str(eventID))
+        r = requests.get(self.eventr + "&activeTimeout=1&maxEvents=1&eventID=" + str(eventID))
         if r.status_code != 200: return -1
         events = r.json()
         if len(events) == 0: return 0
         eventID = events[0]["eventID"]
-        events.reverse()
-        for e in events:
-          return json.dumps(e)
+        thresholdID = events[0]["thresholdID"]
+        if unique == True and eventID != self.events[thresholdID]:
+            self.events[thresholdID] = eventID
+            events.reverse()
+            for e in events:
+              return json.dumps(e)
+        else:
+            return 0
 
 def main():
     es = entropySflowAPI()
