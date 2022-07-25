@@ -2,6 +2,7 @@
 import requests
 import json
 from entropySflowAPI import *
+from entropySflowCalc import *
 import time
 import configparser
 import os
@@ -19,6 +20,7 @@ class entropySflow:
         self.thresholds = dict(self.config.items('THRESHOLDS'))
         self.flows = dict(self.config.items('FLOW_METRICS'))
         self.api = entropySflowAPI()
+        self.threadsflow = {}
 
     def defineThresholds(self):
         i=0
@@ -42,12 +44,45 @@ class entropySflow:
     def defineFlows(self):
         i=0
         for flw in self.flows:
-            self.api.setFlow("Flow" + str(i), self.flows[flw])
+            self.api.setFlow("Flow" + str(i), flw)
             i+=1
+
+    def controlFlow(self, flow):
+        allflows = {}
+        blocklist = {}
+        entropyCalc = entropySflowCalc()
+        while True:
+            allflows = self.api.getFlows(metric = flow, allflows = allflows)
+            print(allflows)
+            if sum(allflows.values()) >= 50:
+                blocklist = entropyCalc.calculateEntropy(hflows = allflows)
+                allflows.clear()
+            #if blocklist:
+                #print(blocklist)
 
 
     def controlFlows(self):
-        self.api.getFlows()
+        i = 0
+        for _ in self.flows:
+            f = "Flow" + str(i)
+            self.threadsflow[f] = Thread(target=self.controlFlow, args=(f, ))
+            self.threadsflow[f].start()
+            i+=1
+
+
+
+        for flow in self.flows:
+            metricf = self.flows[flow].split(",")
+            i = 0
+            for m in metricf:
+                print(m)
+                self.api.setFlow("B" + flow + str(i), m)
+                i+=1
+
+
+        #while True:
+
+
 
 
 def main():

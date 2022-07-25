@@ -35,22 +35,18 @@ class entropySflowAPI:
     def unsetThreshold(self, name):
         pass
 
-    def getFlows(self, unique = True):
-        allflows = {}
-        while True:
-            rf=requests.get(API+'activeflows/ALL/Flow0/json?minValue=1&aggMode=sum')
+    def getFlows(self, metric, allflows, unique = True):
+        rf=requests.get(API+'activeflows/ALL/'+metric+'/json?minValue=1&aggMode=sum')
+        flows = rf.json()
+        for f in flows:
+            key = f["key"]
+            if key not in allflows:
+                allflows[key] = f["value"]
+            else:
+                allflows[key] += f["value"]
 
-            flows = rf.json()
-            for f in flows:
-                key = f["key"]
-                if key not in allflows:
-                    allflows[key] = 1
-                else:
-                    allflows[key] += f["value"]
-
-
-                print(allflows)
-                time.sleep(1)
+        time.sleep(1)
+        return allflows
 
 
 
