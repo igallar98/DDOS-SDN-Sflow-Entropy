@@ -13,10 +13,10 @@ WEIGHTEDMEAN = [0.05, 0.10, 0.20, 0.25, 0.4]
 #DDOS THRESHOLDS
 WM_THRESHOLD = 0.001
 EDDOS_INDICATOR = 0.5
-DDOS_THRESHOLD = 6
+DDOS_THRESHOLD = 5
 DDOS_RESET = 10
 BLOCK = False
-
+#quitarblocklistdeaqui
 class entropySflowCalc:
     def __init__(self):
         self.hashFlows = {}
@@ -64,7 +64,7 @@ class entropySflowCalc:
         else:
             totalEntropy = totalEntropy / log(len(self.hashFlows), 2)
 
-        print(totalEntropy)
+        #print(totalEntropy)
         #PLOT
         if PLOT_ENTROPY:
             self.plotEntropy.append(totalEntropy)
@@ -80,7 +80,7 @@ class entropySflowCalc:
         self.weightedMean()
 
         self.DDosDetection()
-
+        self.blockList.clear()
         return self.blockList
 
     def DosReset(self):
@@ -102,7 +102,8 @@ class entropySflowCalc:
                 self.DosMitigation()
 
 
-
+    def DDosMitigation(self):
+        print("DDos detected")
 
     def DosMitigation(self):
         blockdest  = sorted(self.hashFlows.items(), key=operator.itemgetter(1))[-1]
@@ -132,6 +133,6 @@ class entropySflowCalc:
         #Plot
         if PLOT_WM:
             self.plotWM.append(std_dev)
-
+        #print("D" + str(std_dev))
         if std_dev <= WM_THRESHOLD:
             self.ddosCount += 1

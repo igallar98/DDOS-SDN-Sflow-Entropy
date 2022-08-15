@@ -13,7 +13,7 @@ from mininet.cli import CLI
 # - posts topology to sFlow-RT
 exec(open('sflow-rt/extras/sflow.py').read())
 # Rate limit links to 10Mbps
-link = customClass({'tc':TCLink}, 'tc,bw=10')
+link = customClass({'tc':TCLink}, 'tc,bw=100')
 class SingleSwitchTopo(Topo):
     def build(self, n=2):
         switch = self.addSwitch('s1')

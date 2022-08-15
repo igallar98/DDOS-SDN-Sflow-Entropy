@@ -53,7 +53,7 @@ class entropySflow:
         entropyCalc = entropySflowCalc()
         while True:
             allflows = self.api.getFlows(metric = flow, allflows = allflows)
-            print(allflows)
+            #print(allflows)
             if sum(allflows.values()) >= 50:
                 blocklist = entropyCalc.calculateEntropy(hflows = allflows)
                 allflows.clear()
@@ -75,7 +75,6 @@ class entropySflow:
             metricf = self.flows[flow].split(",")
             i = 0
             for m in metricf:
-                print(m)
                 self.api.setFlow("B" + flow + str(i), m)
                 i+=1
 
