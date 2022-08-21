@@ -80,7 +80,6 @@ class entropySflowCalc:
         self.weightedMean()
 
         self.DDosDetection()
-        self.blockList.clear()
         return self.blockList
 
     def DosReset(self):
@@ -103,13 +102,12 @@ class entropySflowCalc:
 
 
     def DDosMitigation(self):
-        print("DDos detected")
+        blockdest  = sorted(self.hashFlows.items(), key=operator.itemgetter(1))[-1]
+        self.blockList["DDOS"] = 1
 
     def DosMitigation(self):
         blockdest  = sorted(self.hashFlows.items(), key=operator.itemgetter(1))[-1]
-        if blockdest[0] not in self.blockList.keys():
-            print("Blocking all the traffic from " + str(blockdest[0]))
-            self.blockList[blockdest[0]] = -1
+        self.blockList[blockdest[0]] = 0
 
     def weightedMean(self):
         sum  = 0

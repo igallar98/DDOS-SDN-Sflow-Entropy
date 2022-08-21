@@ -18,7 +18,7 @@ class entropySflowAPI:
         self.events = {}
 
 
-    def setFlow(self, name, keys, value = "frames", log = True):
+    def setFlow(self, name, keys, value = "frames",log = True):
         fwr = {'keys':keys,'value':value,'log':log, 'activeTimeout':2, 'n':20000}
         requests.put(API + self.flow + name + self.end, data=json.dumps(fwr))
         self.flows[keys] = fwr

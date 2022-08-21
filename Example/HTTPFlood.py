@@ -33,7 +33,7 @@ except socket.gaierror:
     sys.exit(2)
 
 # Create a shared variable for thread counts
-thread_num = 0
+thread_num = 100
 thread_num_mutex = threading.Lock()
 
 
