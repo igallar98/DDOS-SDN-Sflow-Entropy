@@ -76,7 +76,8 @@ class entropySflow:
 
     def controlFlows(self):
         global blockDict
-
+        global blockOn
+        
         i = 0
         for _ in self.flows:
             f = "Flow" + str(i)
@@ -90,7 +91,11 @@ class entropySflow:
             apirest.start(self.general["ip"], self.general["port"])
         else:
             while True:
-                json.dump(blockDict, open( "index.html", 'w'))
+                if blockOn == False:
+                    FinalblockDict = {"AggressiveTraffic": blockDict}
+                else:
+                    FinalblockDict = {"AttackInProgress": blockDict}
+                json.dump(FinalblockDict, open( "index.html", 'w'))
                 time.sleep(1)
 
 

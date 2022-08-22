@@ -1,6 +1,7 @@
 from scapy.all import *
 from math import log, sqrt
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 #Test Plot
 PLOT_ENTROPY = True
@@ -102,12 +103,16 @@ class entropySflowCalc:
 
 
     def DDosMitigation(self):
+        now = datetime.now()
+        timestamp = datetime.timestamp(now)
         blockdest  = sorted(self.hashFlows.items(), key=operator.itemgetter(1))[-1]
-        self.blockList["DDOS"] = 1
+        self.blockList["DDOS " + blockdest[0]] = timestamp
 
     def DosMitigation(self):
+        now = datetime.now()
+        timestamp = datetime.timestamp(now)
         blockdest  = sorted(self.hashFlows.items(), key=operator.itemgetter(1))[-1]
-        self.blockList[blockdest[0]] = 0
+        self.blockList[blockdest[0]] = timestamp
 
     def weightedMean(self):
         sum  = 0
