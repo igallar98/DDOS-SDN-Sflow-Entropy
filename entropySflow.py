@@ -37,14 +37,13 @@ class entropySflow:
         global blockOn
         response = 200
         prevTimestamp = 0
-        while response != -1:
+        while True:
             response = self.api.getEvent()
-            t = time.time()
-            if (t - prevTimestamp) >= UPDATE_TIME:
+            if response >= 1:
+                blockOn = True
+                time.sleep(10)
+            elif response == -2:
                 blockOn = False
-            if response == 0: continue
-            prevTimestamp = time.time()
-            blockOn = True
 
     def defineFlows(self):
         i=0
@@ -77,7 +76,7 @@ class entropySflow:
     def controlFlows(self):
         global blockDict
         global blockOn
-        
+
         i = 0
         for _ in self.flows:
             f = "Flow" + str(i)
@@ -95,6 +94,9 @@ class entropySflow:
                     FinalblockDict = {"AggressiveTraffic": blockDict}
                 else:
                     FinalblockDict = {"AttackInProgress": blockDict}
+                    if len(blockDict) > 0:
+                        print(FinalblockDict)
+                        time.sleep(10)
                 json.dump(FinalblockDict, open( "index.html", 'w'))
                 time.sleep(1)
 

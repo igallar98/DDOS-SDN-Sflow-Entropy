@@ -55,16 +55,14 @@ class entropySflowAPI:
         r = requests.get(self.eventr + "&activeTimeout=5&maxEvents=1&eventID=" + str(eventID))
         if r.status_code != 200: return -1
         events = r.json()
-        if len(events) == 0: return 0
+        if len(events) == 0: return -3
         eventID = events[0]["eventID"]
         thresholdID = events[0]["thresholdID"]
-        if unique == True and eventID != self.events[thresholdID]:
-            self.events[thresholdID] = eventID
-            events.reverse()
-            for e in events:
-              return json.loads(json.dumps(e))
+        if unique == True and eventID != self.events:
+            self.events = eventID
+            return eventID
         else:
-            return 0
+            return -2
 
 def main():
     es = entropySflowAPI()

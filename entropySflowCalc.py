@@ -12,7 +12,7 @@ HISTORICSAMPLES = 5
 WEIGHTEDMEAN = [0.05, 0.10, 0.20, 0.25, 0.4]
 
 #DDOS THRESHOLDS
-WM_THRESHOLD = 0.001
+WM_THRESHOLD = 0.0001
 EDDOS_INDICATOR = 0.5
 DDOS_THRESHOLD = 5
 DDOS_RESET = 10
@@ -81,6 +81,7 @@ class entropySflowCalc:
         self.weightedMean()
 
         self.DDosDetection()
+
         return self.blockList
 
     def DosReset(self):
@@ -97,22 +98,26 @@ class entropySflowCalc:
         elif self.ddosCount >= DDOS_THRESHOLD:
             self.DosReset()
             if self.hEntropyValue > EDDOS_INDICATOR:
-                self.DDosMitigation()
+                return self.DDosMitigation()
             else:
-                self.DosMitigation()
+                return self.DosMitigation()
+        return 0
 
 
     def DDosMitigation(self):
         now = datetime.now()
         timestamp = datetime.timestamp(now)
-        blockdest  = sorted(self.hashFlows.items(), key=operator.itemgetter(1))[-1]
-        self.blockList["DDOS " + blockdest[0]] = timestamp
+        blockdest  = sorted(self.hashFlows.items(), key=operator.itemgetter(1))
+        self.blockList["DDOS"] = [blockdest, timestamp]
+        return 1
+
 
     def DosMitigation(self):
         now = datetime.now()
         timestamp = datetime.timestamp(now)
         blockdest  = sorted(self.hashFlows.items(), key=operator.itemgetter(1))[-1]
         self.blockList[blockdest[0]] = timestamp
+        return 1
 
     def weightedMean(self):
         sum  = 0

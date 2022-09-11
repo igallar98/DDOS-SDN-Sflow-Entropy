@@ -1,0 +1,3 @@
+sudo service openvswitch-switch start
+sudo ./sflow-rt/start.sh
+sudo python3 topo.py
