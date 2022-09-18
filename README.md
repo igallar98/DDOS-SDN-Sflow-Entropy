@@ -5,6 +5,7 @@
 
 This application implements a multidimensional denial of service (DoS) detector using Sflow and an entropy approach for detecting different DoS attacks that have different characteristics, improving the traditional entropy approach into a more effective and accurate detection. The results are 100\% detection tested with the most accurate dataset publicly available as a method for detecting DoS and DDoS attacks. Furthermore, by easily adding one line in the configuration file, it is possible to detect new attacks. Moreover, the false-negative ratio is zero because with Sflow it is possible to analyze more attack-dependent variables.
 
+> :information_source: This repository hosts the final application of my Master's thesis. The final thesis report is available on this [page](https://github.com/igallar98/DDOS-SDN-Sflow-Entropy/blob/main/FinalThesis_IvanGallardoRomero.pdf). This report contains the full information about the application.
 
 ## Features
 
@@ -52,6 +53,8 @@ The detection application can be started using the following command. Remember t
 ```sh
 python3 entropySflow.py 
 ``` 
+## Configuration file
+The [configuration file](https://github.com/igallar98/DDOS-SDN-Sflow-Entropy/blob/main/config.cfg) available settings are shown in the [final thesis report](https://github.com/igallar98/DDOS-SDN-Sflow-Entropy/blob/main/FinalThesis_IvanGallardoRomero.pdf).
 ## Development
 
 Want to contribute? Great! 
