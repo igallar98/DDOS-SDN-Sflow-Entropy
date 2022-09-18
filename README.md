@@ -9,7 +9,7 @@ This application implements a multidimensional denial of service (DoS) detector 
 ## Features
 
 - Detects DoS and DDoS using an entropy approach, by making use of the protocol Sflow.
-- Get the block list or aggresive traffic by using an API REST.
+- Get the block list or aggressive traffic by using an API REST.
 - Easy to add new DoS and DDoS detection methods.
 
 ## Requeriments
@@ -35,7 +35,7 @@ Firstly, starts the OpenSflow switch with the following command:
 ```sh
 sudo service openvswitch-switch start
 ```
-Once started, it is needed to startthe SFlow-RT application. You can use the following command in the Sflow-RT path:
+Once started, it is needed to start SFlow-RT application. You can use the following command in the Sflow-RT path:
 ```sh
 sudo ./sflow-rt/start.sh
 ```
@@ -43,12 +43,12 @@ Finally, you can emulate a SDN network using Mininet. An example topology is ava
 ```sh
 sudo python3 topo.py
 ```
-In the Example directory, there are tools for performing attacks. You can use the folowing command in Mininet to perform an UDP Flood attack for example.
+In the Example directory, there are tools for performing attacks. You can use the following command in Mininet to perform an UDP Flood attack for example.
 ```sh
 h1 hping3 --udp --flood h2 
 ``` 
 
-The attacks application can be started using the following command. Remeber to check the configuration file.
+The detection application can be started using the following command. Remember to check the configuration file.
 ```sh
 python3 entropySflow.py 
 ``` 
