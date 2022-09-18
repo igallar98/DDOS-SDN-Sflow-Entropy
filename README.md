@@ -1,5 +1,5 @@
 # DDOS-SDN-Sflow-Entropy
-## _A Sflow-RT application for detecting DoS using an entropy approach_
+## _A Sflow-RT application for detecting DoS in SDN using an entropy approach_
 
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://github.com/igallar98/DDOS-SDN-Sflow-Entropy)
 
